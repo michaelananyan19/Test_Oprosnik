@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Level Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <style>
+        /* ── Reset & base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        /* ── Main card ── */
+        .test-container {
+            max-width: 720px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* ── Header (dark gradient) ── */
+        .test-header {
+            background: linear-gradient(135deg, #0b1120 0%, #1a2332 100%);
+            padding: 32px 40px 28px;
+            color: #ffffff;
+        }
+
+        .test-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            margin-bottom: 4px;
+        }
+
+        .test-header .subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .test-header .meta {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 18px;
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .test-header .meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .test-header .meta .dot {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ── Progress bar ── */
+        .progress-wrap {
+            background: rgba(255, 255, 255, 0.08);
+            height: 4px;
+            margin-top: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #6c8cff;
+            border-radius: 4px;
+            transition: width 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* ── Question area ── */
+        .question-area {
+            padding: 32px 40px 28px;
+        }
+
+        .question-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7a8f;
+            letter-spacing: 0.2px;
+        }
+
+        .question-top .q-counter {
+            color: #1a2332;
+            font-weight: 600;
+        }
+
+        .question-top .q-percent {
+            background: #f0f2f5;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a2332;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: #0b1120;
+            margin-bottom: 24px;
+        }
+
+        /* ── Options ── */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1.5px solid #e9edf2;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 15px;
+            line-height: 1.4;
+            color: #1a2332;
+        }
+
+        .option:hover {
+            border-color: #c8d0db;
+            background: #fafbfc;
+        }
+
+        .option.selected {
+            border-color: #6c8cff;
+            background: #f0f4ff;
+            box-shadow: 0 0 0 2px rgba(108, 140, 255, 0.12);
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            margin-top: 1px;
+            border-radius: 50%;
+            border: 2px solid #c8d0db;
+            background: #ffffff;
+            transition: all 0.15s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .option input[type="checkbox"] {
+            border-radius: 6px;
+        }
+
+        .option input[type="radio"]:checked,
+        .option input[type="checkbox"]:checked {
+            border-color: #6c8cff;
+            background: #6c8cff;
+        }
+
+        .option input[type="radio"]:checked::after,
+        .option input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffffff;
+        }
+
+        .option input[type="checkbox"]:checked::after {
+            width: 10px;
+            height: 6px;
+            border-radius: 0;
+            border-left: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            transform: translate(-50%, -60%) rotate(-45deg);
+            background: transparent;
+        }
+
+        .option .label-text {
+            flex: 1;
+            user-select: none;
+        }
+
+        /* ── Navigation ── */
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 40px 32px;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 40px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: #f0f2f5;
+            color: #1a2332;
+        }
+
+        .btn:hover {
+            background: #e4e7ed;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .btn-primary {
+            background: #1a2332;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #0b1120;
+        }
+
+        .btn-primary:disabled {
+            background: #c8d0db;
+            color: #8b9aaf;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #6b7a8f;
+            border: 1.5px solid #e9edf2;
+        }
+
+        .btn-outline:hover {
+            background: #f5f7fb;
+            border-color: #c8d0db;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* ── Results ── */
+        .results {
+            padding: 32px 40px 40px;
+            text-align: center;
+        }
+
+        .results .big-icon {
+            font-size: 56px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .results h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1120;
+            margin-bottom: 8px;
+        }
+
+        .results .level-badge {
+            display: inline-block;
+            background: #f0f4ff;
+            color: #6c8cff;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 6px 20px;
+            border-radius: 40px;
+            margin: 8px 0 16px;
+        }
+
+        .results .desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #3d4d62;
+            max-width: 480px;
+            margin: 0 auto 28px;
+        }
+
+        .results .track {
+            background: #f5f7fb;
+            border-radius: 16px;
+            padding: 20px 24px;
+            text-align: left;
+            max-width: 480px;
+            margin: 0 auto 32px;
+        }
+
+        .results .track h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0b1120;
+            margin-bottom: 4px;
+        }
+
+        .results .track p {
+            font-size: 14px;
+            color: #3d4d62;
+            line-height: 1.5;
+        }
+
+        .results .btn {
+            min-width: 180px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .test-header {
+                padding: 24px 20px 20px;
+            }
+            .test-header h1 {
+                font-size: 22px;
+            }
+            .question-area {
+                padding: 24px 20px 20px;
+            }
+            .question-text {
+                font-size: 17px;
+            }
+            .nav-row {
+                padding: 4px 20px 24px;
+                flex-wrap: wrap;
+            }
+            .nav-row .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            .results {
+                padding: 24px 20px 32px;
+            }
+            .option {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+            .option input[type="radio"],
+            .option input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+            }
+            .test-header .meta {
+                font-size: 13px;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .nav-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-right {
+                justify-content: space-between;
+            }
+            .nav-right .btn {
+                flex: 1;
+            }
+        }
+
+        /* ── Utility ── */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-muted {
+            color: #6b7a8f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="test-container" id="app">
+
+        <!-- ===== HEADER ===== -->
+        <div class="test-header">
+            <h1>AI Level Test</h1>
+            <p class="subtitle">Определите ваш уровень владения AI</p>
+            <p style="font-size:14px;opacity:0.6;margin-top:2px;">
+                10 вопросов, которые помогут понять, какой образовательный трек подходит именно вам
+            </p>
+            <div class="meta">
+                <span>✅ 10 вопросов</span>
+                <span class="dot"></span>
+                <span>⏱ 3 минуты</span>
+                <span class="dot"></span>
+                <span>🎯 Персональный результат</span>
+            </div>
+            <div class="progress-wrap">
+                <div class="progress-bar" id="progressBar" style="width:0%;"></div>
+            </div>
+        </div>
+
+        <!-- ===== QUESTION VIEW ===== -->
+        <div id="questionView">
+            <div class="question-area">
+                <div class="question-top">
+                    <span class="q-counter" id="qCounter">Вопрос 1 из 10</span>
+                    <span class="q-percent" id="qPercent">0%</span>
+                </div>
+                <div class="question-text" id="qText">Загрузка вопроса…</div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+            <div class="nav-row">
+                <button class="btn btn-outline" id="btnBack" disabled>← Назад</button>
+                <div class="nav-right">
+                    <button class="btn btn-primary" id="btnNext">Далее →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== RESULTS VIEW ===== -->
+        <div id="resultsView" class="results hidden">
+            <span class="big-icon" id="resultIcon">🏆</span>
+            <h2 id="resultTitle">Ваш уровень</h2>
+            <div class="level-badge" id="resultBadge">Начинающий</div>
+            <p class="desc" id="resultDesc">Описание вашего уровня и рекомендации.</p>
+            <div class="track" id="resultTrack">
+                <h4>📌 Рекомендуемый трек</h4>
+                <p id="resultTrackText">Базовый курс по AI-инструментам</p>
+            </div>
+            <button class="btn btn-primary" id="btnRestart">🔄 Пройти заново</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── DATA ───────────────────────────────────────────────────────────
+            const questions = [{
+                id: 1,
+                text: 'Как часто вы используете AI-инструменты (ChatGPT, Claude, Gemini и т.д.) в работе или учёбе?',
+                multiple: false,
+                options: [
+                    'Никогда не пробовал(а) или пробовал(а) пару раз из любопытства',
+                    'Использую время от времени, когда вспоминаю о такой возможности',
+                    'Использую регулярно — это уже часть моего рабочего процесса',
+                    'Использую ежедневно и не представляю свою работу без AI'
+                ]
+            }, {
+                id: 2,
+                text: 'Для каких задач вы чаще всего обращаетесь к AI?',
+                multiple: true,
+                options: [
+                    'Не использую или просто задаю вопросы как в поисковике',
+                    'Пишу и редактирую тексты, ищу информацию, генерирую идеи',
+                    'Пишу и отлаживаю код, анализирую данные, работаю с файлами, автоматизирую рутину',
+                    'Строю сложные пайплайны: агенты, RAG, автоматизации через API'
+                ]
+            }, {
+                id: 3,
+                text: 'Как вы оцениваете свой уровень понимания принципов работы AI (нейросети, обучение, токены и т.д.)?',
+                multiple: false,
+                options: [
+                    'Почти ничего не знаю, для меня это «чёрный ящик»',
+                    'Имею общее представление, но без глубоких деталей',
+                    'Понимаю основные концепции и могу объяснить их другим',
+                    'Углублённо разбираюсь в архитектурах и математике'
+                ]
+            }, {
+                id: 4,
+                text: 'Как часто вы читаете новости или статьи об AI?',
+                multiple: false,
+                options: [
+                    'Почти никогда',
+                    'Иногда, если попадается в ленте',
+                    'Регулярно слежу за основными трендами',
+                    'Ежедневно изучаю новые модели и исследования'
+                ]
+            }, {
+                id: 5,
+                text: 'Какие AI-инструменты вы использовали за последние 3 месяца? (выберите все подходящие)',
+                multiple: true,
+                options: [
+                    'Только ChatGPT или аналоги (Claude, Gemini)',
+                    'Генераторы изображений (Midjourney, DALL·E, Stable Diffusion)',
+                    'Инструменты для кода (GitHub Copilot, Cursor, Tabnine)',
+                    'Платформы для автоматизации (Zapier, Make, n8n с AI)'
+                ]
+            }, {
+                id: 6,
+                text: 'Насколько уверенно вы настраиваете промпты для получения нужного результата?',
+                multiple: false,
+                options: [
+                    'Часто результат не совпадает с ожиданиями, сложно формулировать',
+                    'Базовые промпты получаются, но сложные задачи требуют доработки',
+                    'Уверенно составляю цепочки промптов и использую техники (few-shot, chain-of-thought)',
+                    'Проектирую сложные промпт-системы с валидацией и итерациями'
+                ]
+            }, {
+                id: 7,
+                text: 'В каких сферах вы применяете AI? (выберите все подходящие)',
+                multiple: true,
+                options: [
+                    'Образование / самообучение',
+                    'Маркетинг / контент / дизайн',
+                    'Программирование / data science / инженерия',
+                    'Управление проектами / бизнес-процессы'
+                ]
+            }, {
+                id: 8,
+                text: 'Как вы относитесь к внедрению AI в свою повседневную работу?',
+                multiple: false,
+                options: [
+                    'Скептически — пока не вижу реальной пользы для себя',
+                    'Нейтрально — использую, но без фанатизма',
+                    'Позитивно — AI помогает мне работать быстрее и качественнее',
+                    'Энтузиастически — я постоянно ищу новые способы применения AI'
+                ]
+            }, {
+                id: 9,
+                text: 'Какие навыки в области AI вы хотите развить в первую очередь?',
+                multiple: true,
+                options: [
+                    'Эффективная работа с текстовыми AI (промпт-инжиниринг)',
+                    'Создание изображений и мультимедиа с помощью AI',
+                    'Автоматизация задач и интеграция AI в рабочие процессы',
+                    'Создание собственных AI-решений (агенты, RAG, тонкая настройка)'
+                ]
+            }, {
+                id: 10,
+                text: 'Готовы ли вы инвестировать время в изучение AI в ближайшие полгода?',
+                multiple: false,
+                options: [
+                    'Нет, меня это не интересует',
+                    'Возможно, но без чёткого плана',
+                    'Да, я хочу пройти структурированное обучение',
+                    'Уже активно учусь и планирую углубляться'
+                ]
+            }];
+
+            const TOTAL = questions.length;
+
+            // ─── STATE ──────────────────────────────────────────────────────────
+            let currentIndex = 0;
+            // answers: array of arrays (selected option indices per question)
+            const answers = questions.map(() => []);
+
+            // ─── DOM refs ──────────────────────────────────────────────────────
+            const questionView = document.getElementById('questionView');
+            const resultsView = document.getElementById('resultsView');
+            const progressBar = document.getElementById('progressBar');
+            const qCounter = document.getElementById('qCounter');
+            const qPercent = document.getElementById('qPercent');
+            const qText = document.getElementById('qText');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const btnBack = document.getElementById('btnBack');
+            const btnNext = document.getElementById('btnNext');
+            const btnRestart = document.getElementById('btnRestart');
+
+            // Results
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultBadge = document.getElementById('resultBadge');
+            const resultDesc = document.getElementById('resultDesc');
+            const resultTrackText = document.getElementById('resultTrackText');
+
+            // ─── HELPERS ──────────────────────────────────────────────────────
+            function getQuestion(index) {
+                return questions[index];
+            }
+
+            function getSelected(index) {
+                return answers[index] || [];
+            }
+
+            function isMultiple(index) {
+                return questions[index].multiple === true;
+            }
+
+            function updateProgress() {
+                const pct = Math.round(((currentIndex + 1) / TOTAL) * 100);
+                progressBar.style.width = pct + '%';
+                qPercent.textContent = pct + '%';
+                qCounter.textContent = 'Вопрос ' + (currentIndex + 1) + ' из ' + TOTAL;
+            }
+
+            // ─── RENDER QUESTION ─────────────────────────────────────────────
+            function renderQuestion() {
+                const q = getQuestion(currentIndex);
+                const selected = getSelected(currentIndex);
+                const multi = isMultiple(currentIndex);
+
+                qText.textContent = q.text;
+
+                // Build options
+                optionsContainer.innerHTML = '';
+                q.options.forEach((optText, idx) => {
+                    const isSelected = selected.includes(idx);
+                    const label = document.createElement('label');
+                    label.className = 'option' + (isSelected ? ' selected' : '');
+
+                    const input = document.createElement('input');
+                    input.type = multi ? 'checkbox' : 'radio';
+                    input.name = 'q' + currentIndex;
+                    input.value = idx;
+                    input.checked = isSelected;
+
+                    // event
+                    input.addEventListener('change', function(e) {
+                        if (multi) {
+                            // checkbox
+                            if (this.checked) {
+                                if (!answers[currentIndex].includes(idx)) {
+                                    answers[currentIndex].push(idx);
+                                }
+                            } else {
+                                answers[currentIndex] = answers[currentIndex].filter(i => i !== idx);
+                            }
+                            // update visual
+                            label.classList.toggle('selected', this.checked);
+                        } else {
+                            // radio – unselect others
+                            answers[currentIndex] = [idx];
+                            // update all options in this question
+                            const allLabels = optionsContainer.querySelectorAll('.option');
+                            allLabels.forEach((lbl, i) => {
+                                lbl.classList.toggle('selected', i === idx);
+                            });
+                        }
+                        // enable/disable next
+                        updateNextButton();
+                    });
+
+                    const span = document.createElement('span');
+                    span.className = 'label-text';
+                    span.textContent = optText;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsContainer.appendChild(label);
+                });
+
+                // For radio: if we have a selection, highlight it
+                if (!multi && selected.length > 0) {
+                    const allLabels = optionsContainer.querySelectorAll('.option');
+                    allLabels.forEach((lbl, i) => {
+                        lbl.classList.toggle('selected', i === selected[0]);
+                    });
+                }
+
+                updateProgress();
+                updateNavButtons();
+                updateNextButton();
+            }
+
+            // ─── NAV ──────────────────────────────────────────────────────────
+            function updateNavButtons() {
+                btnBack.disabled = currentIndex === 0;
+            }
+
+            function updateNextButton() {
+                const sel = getSelected(currentIndex);
+                btnNext.disabled = sel.length === 0;
+                // change text on last question
+                if (currentIndex === TOTAL - 1) {
+                    btnNext.textContent = '📊 Узнать результат';
+                } else {
+                    btnNext.textContent = 'Далее →';
+                }
+            }
+
+            function goTo(index) {
+                if (index < 0 || index >= TOTAL) return;
+                currentIndex = index;
+                renderQuestion();
+            }
+
+            function goNext() {
+                const sel = getSelected(currentIndex);
+                if (sel.length === 0) return;
+                if (currentIndex === TOTAL - 1) {
+                    showResults();
+                    return;
+                }
+                goTo(currentIndex + 1);
+            }
+
+            function goBack() {
+                if (currentIndex > 0) goTo(currentIndex - 1);
+            }
+
+            // ─── RESULTS ──────────────────────────────────────────────────────
+            function computeLevel() {
+                // Simple scoring: count how many "advanced" answers
+                let score = 0;
+                const totalSelections = answers.reduce((sum, arr) => sum + arr.length, 0);
+
+                // For each question, take the highest selected index as a proxy for "advancement"
+                // but also consider multi-select as bonus.
+                let raw = 0;
+                answers.forEach((sel, qi) => {
+                    if (sel.length === 0) return;
+                    // average of selected indices (0-based)
+                    const sum = sel.reduce((a, b) => a + b, 0);
+                    const avg = sum / sel.length;
+                    // normalize: max index is 3, so avg/3 * 10
+                    const qScore = (avg / 3) * 10;
+                    raw += qScore;
+                });
+
+                // Normalize by number of questions that have at least one answer
+                const answered = answers.filter(a => a.length > 0).length;
+                if (answered === 0) return { level: 'beginner', badge: 'Начинающий', icon: '🌱' };
+
+                const avgScore = raw / answered;
+
+                let level, badge, icon, desc, track;
+                if (avgScore < 3.5) {
+                    level = 'beginner';
+                    badge = 'Начинающий';
+                    icon = '🌱';
+                    desc = 'Вы делаете первые шаги в мире AI. У вас есть базовое представление, но пока нет системного опыта. Отличное время, чтобы начать!';
+                    track = 'Базовый курс «AI для начинающих» — знакомство с инструментами, промпт-инжиниринг и первые проекты.';
+                } else if (avgScore < 6.0) {
+                    level = 'intermediate';
+                    badge = 'Продвинутый пользователь';
+                    icon = '🚀';
+                    desc = 'Вы уверенно используете AI в работе, знаете основные подходы и экспериментируете с разными задачами. У вас хорошая база для роста!';
+                    track = 'Практический трек «AI-профессионал» — углублённая работа с промптами, автоматизация и кейсы из реальных проектов.';
+                } else if (avgScore < 8.5) {
+                    level = 'advanced';
+                    badge = 'Эксперт';
+                    icon = '🧠';
+                    desc = 'Вы глубоко погружены в AI, строите сложные пайплайны и понимаете внутренние механизмы. Вы готовы к самым сложным вызовам!';
+                    track = 'Продвинутый трек «AI-инженер» — агенты, RAG, тонкая настройка моделей и создание собственных решений.';
+                } else {
+                    level = 'master';
+                    badge = 'Мастер AI';
+                    icon = '🏆';
+                    desc = 'Вы на передовой AI-технологий. Ваш уровень позволяет не только использовать, но и создавать инновационные решения. Продолжайте задавать тренды!';
+                    track = 'Экспертный трек «AI-исследователь» — передовые архитектуры, научные публикации и создание собственных моделей.';
+                }
+
+                return { level, badge, icon, desc, track };
+            }
+
+            function showResults() {
+                questionView.classList.add('hidden');
+                resultsView.classList.remove('hidden');
+
+                const result = computeLevel();
+                resultIcon.textContent = result.icon;
+                resultTitle.textContent = 'Ваш уровень владения AI';
+                resultBadge.textContent = result.badge;
+                resultDesc.textContent = result.desc;
+                resultTrackText.textContent = result.track;
+
+                // set progress to 100%
+                progressBar.style.width = '100%';
+                qPercent.textContent = '100%';
+            }
+
+            // ─── RESTART ──────────────────────────────────────────────────────
+            function restart() {
+                // reset answers
+                for (let i = 0; i < TOTAL; i++) answers[i] = [];
+                currentIndex = 0;
+                resultsView.classList.add('hidden');
+                questionView.classList.remove('hidden');
+                renderQuestion();
+                progressBar.style.width = '0%';
+                qPercent.textContent = '0%';
+                qCounter.textContent = 'Вопрос 1 из ' + TOTAL;
+                btnBack.disabled = true;
+                btnNext.disabled = true;
+                btnNext.textContent = 'Далее →';
+            }
+
+            // ─── INIT ─────────────────────────────────────────────────────────
+            function init() {
+                renderQuestion();
+                btnNext.addEventListener('click', goNext);
+                btnBack.addEventListener('click', goBack);
+                btnRestart.addEventListener('click', restart);
+
+                // keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowRight' || e.key === 'Enter') {
+                        if (!btnNext.disabled) goNext();
+                    }
+                    if (e.key === 'ArrowLeft') {
+                        if (!btnBack.disabled) goBack();
+                    }
+                });
+            }
+
+            init();
+        })();
+    </script>
+
+</body>
+</html>
